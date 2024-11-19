@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3 uid="uid://byl57vq7oyd6"]
+
+[ext_resource type="Texture2D" uid="uid://d2j8o0e1ktpie" path="res://Assets/monochrome-transparent_packed.png" id="1_ls05n"]
+[ext_resource type="Script" path="res://Scenes/Cursor/Cursor.gd" id="1_u1vrl"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_ky0lv"]
+font_size = 12
+
+[node name="Cursor" type="Node2D" node_paths=PackedStringArray("label")]
+script = ExtResource("1_u1vrl")
+faction = 1
+label = NodePath("Label")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 1, 0.74902)
+texture = ExtResource("1_ls05n")
+region_enabled = true
+region_rect = Rect2(400, 224, 16, 16)
+
+[node name="Label" type="Label" parent="."]
+offset_left = 6.0
+offset_right = 46.0
+offset_bottom = 23.0
+text = "4m"
+label_settings = SubResource("LabelSettings_ky0lv")

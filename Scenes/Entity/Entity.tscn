@@ -1,0 +1,87 @@
+[gd_scene load_steps=9 format=3 uid="uid://bkqobfp38ekqq"]
+
+[ext_resource type="Script" path="res://Scenes/Entity/Entity.gd" id="1_6vmp8"]
+[ext_resource type="Script" path="res://Components/Health/Health.gd" id="2_el80x"]
+[ext_resource type="Script" path="res://Resources/Stats/Stats.gd" id="2_h6787"]
+[ext_resource type="Script" path="res://Components/Inventory/Inventory.gd" id="3_jfdha"]
+[ext_resource type="Script" path="res://Components/Mitigation/Mitigation.gd" id="4_mts4u"]
+[ext_resource type="Texture2D" uid="uid://d1oreqgwkna4k" path="res://Assets/tilemap_packed.png" id="5_7ungx"]
+
+[sub_resource type="Resource" id="Resource_7lo26"]
+script = ExtResource("2_h6787")
+might_base = 0
+alacrity_base = 0
+brilliance_base = 0
+fortitude_base = 0
+resolve_base = 0
+luck_base = 0
+might_modifier = 1.0
+alacrity_modifier = 1.0
+brilliance_modifier = 1.0
+fortitude_modifier = 1.0
+resolve_modifier = 1.0
+luck_modifier = 1.0
+health_base = 100
+health_modifier = 1.0
+health_from_fortitude = 5
+health_regeneration = 0
+health_regeneration_from_resolve = 10
+mana_base = 50
+mana_modifier = 1.0
+mana_from_brilliance = 5
+mana_replenishment = 0
+mana_replenishment_from_resolve = 5
+critical_chance_base = 0.05
+critical_modifier_base = 1.0
+critical_chance_limit = 1.0
+critical_chance_from_alacity = 0.3
+dodge_chance_base = 0.05
+dodge_chance_modifier = 1.0
+dodge_chance_limit = 0.75
+dodge_chance_from_alacity = 0.25
+parry_chance_base = 0.05
+parry_chance_modifier = 1.0
+parry_chance_limit = 0.75
+parry_chance_from_resolve = 0.3
+action_points = 1
+movement_speed = 5
+
+[sub_resource type="LabelSettings" id="LabelSettings_6wffy"]
+font_size = 8
+
+[node name="Entity" type="Node2D" node_paths=PackedStringArray("label")]
+script = ExtResource("1_6vmp8")
+stats = SubResource("Resource_7lo26")
+label = NodePath("Label")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("2_el80x")
+
+[node name="Inveotry" type="Node" parent="."]
+script = ExtResource("3_jfdha")
+
+[node name="Mitigation" type="Node" parent="."]
+script = ExtResource("4_mts4u")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("5_7ungx")
+region_enabled = true
+region_rect = Rect2(256, 112, 16, 16)
+
+[node name="Label" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -22.0
+offset_right = 20.0
+offset_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+text = "Entity"
+label_settings = SubResource("LabelSettings_6wffy")
+horizontal_alignment = 1
+vertical_alignment = 1

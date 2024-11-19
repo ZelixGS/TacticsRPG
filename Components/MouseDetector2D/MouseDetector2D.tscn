@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://fuaftqymmxtm"]
+
+[ext_resource type="Script" path="res://Components/MouseDetector2D/MouseDetector2D.gd" id="1_uu6av"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8ipul"]
+size = Vector2(16, 16)
+
+[node name="MouseDetector2D" type="Area2D"]
+collision_mask = 0
+monitorable = false
+script = ExtResource("1_uu6av")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+shape = SubResource("RectangleShape2D_8ipul")
+debug_color = Color(1, 1, 1, 0.42)
+
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]

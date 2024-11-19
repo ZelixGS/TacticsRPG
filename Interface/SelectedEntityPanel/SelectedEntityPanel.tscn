@@ -1,0 +1,105 @@
+[gd_scene load_steps=2 format=3 uid="uid://ba7a6yqp5p6yt"]
+
+[ext_resource type="Script" path="res://Interface/SelectedEntityPanel/SelectedEntityPanel.gd" id="1_lq8hd"]
+
+[node name="SelectedEntityPanel" type="Control" node_paths=PackedStringArray("selected_name", "selected_portrait", "selected_health", "selected_movement")]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_lq8hd")
+selected_name = NodePath("HBoxContainer3/VBoxContainer2/EntityName")
+selected_portrait = NodePath("HBoxContainer3/VBoxContainer2/EntityPortrait")
+selected_health = NodePath("HBoxContainer3/VBoxContainer/HBoxContainer2/Health")
+selected_movement = NodePath("HBoxContainer3/VBoxContainer/HBoxContainer2/Movement")
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -166.0
+offset_top = -107.0
+offset_right = 166.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="HBoxContainer3"]
+layout_mode = 2
+
+[node name="EntityName" type="Label" parent="HBoxContainer3/VBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Zelix"
+horizontal_alignment = 1
+
+[node name="EntityPortrait" type="TextureRect" parent="HBoxContainer3/VBoxContainer2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 80)
+layout_mode = 2
+expand_mode = 2
+stretch_mode = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer3"]
+layout_mode = 2
+alignment = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="HBoxContainer3/VBoxContainer"]
+layout_mode = 2
+
+[node name="Health" type="ProgressBar" parent="HBoxContainer3/VBoxContainer/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Movement" type="ProgressBar" parent="HBoxContainer3/VBoxContainer/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer3/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Button" type="Button" parent="HBoxContainer3/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+text = "1"
+
+[node name="Button2" type="Button" parent="HBoxContainer3/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+text = "2"
+
+[node name="Button3" type="Button" parent="HBoxContainer3/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+text = "3"
+
+[node name="Button4" type="Button" parent="HBoxContainer3/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+text = "4"
+
+[node name="Button5" type="Button" parent="HBoxContainer3/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+text = "5"
+
+[node name="Button6" type="Button" parent="HBoxContainer3/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+text = "6"
+
+[node name="Button7" type="Button" parent="HBoxContainer3/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+text = "8"
+
+[node name="Button" type="Button" parent="HBoxContainer3"]
+layout_mode = 2
+text = "Undo"
+
+[connection signal="pressed" from="HBoxContainer3/Button" to="." method="_on_button_pressed"]
