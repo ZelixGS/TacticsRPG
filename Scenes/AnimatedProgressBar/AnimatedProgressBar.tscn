@@ -7,15 +7,10 @@
 [ext_resource type="Texture2D" uid="uid://n5rnywgo521r" path="res://Scenes/AnimatedProgressBar/RedToGreenGradiant.tres" id="5_c6g6b"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_421l3"]
-outline_size = 6
-outline_color = Color(0, 0, 0, 1)
-shadow_size = 6
-shadow_color = Color(0, 0, 0, 0.25098)
+shadow_size = 8
+shadow_color = Color(0, 0, 0, 0.74902)
 
-[node name="AnimatedProgressBar" type="TextureProgressBar" node_paths=PackedStringArray("value_label")]
-custom_minimum_size = Vector2(300, 40)
-offset_right = 300.0
-offset_bottom = 40.0
+[node name="AnimatedProgressBar" type="TextureProgressBar"]
 max_value = 5.0
 value = 5.0
 rounded = true
@@ -26,13 +21,14 @@ texture_progress = ExtResource("3_4qwtq")
 tint_progress = Color(0, 1, 0, 1)
 script = ExtResource("1_b7rnt")
 gradiant = ExtResource("5_c6g6b")
-value_label = NodePath("MarginContainer/ValueLabel")
-label_show_percentage = false
 
 [node name="TextureProgressBar" type="TextureProgressBar" parent="."]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -47,12 +43,10 @@ theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
 
 [node name="ValueLabel" type="Label" parent="MarginContainer"]
+texture_filter = 2
 layout_mode = 2
 size_flags_horizontal = 3
 text = "5/5"
 label_settings = SubResource("LabelSettings_421l3")
 horizontal_alignment = 1
 vertical_alignment = 1
-
-[connection signal="changed" from="." to="." method="_on_changed"]
-[connection signal="value_changed" from="." to="." method="_on_value_changed"]

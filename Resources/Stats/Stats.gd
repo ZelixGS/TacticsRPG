@@ -114,6 +114,9 @@ func get_mana_replenishment() -> int:
 @export var parry_chance_limit: float = 0.75
 @export var parry_chance_from_resolve: float = 0.3
 
+func get_dodge_chance() -> float:
+	return min(dodge_chance_base + (get_alacrity() * dodge_chance_from_alacity), dodge_chance_limit)
+
 #endregion
 
 #region Misc

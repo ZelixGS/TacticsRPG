@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bgv34m0pn3ynp"
-path="res://.godot/imported/icon_grid.png-7ba7d09090d16e80609344d45c935104.ctex"
+uid="uid://cianjs12ooe2f"
+path="res://.godot/imported/cell_highlight_stroke_only.png-a13225c6e381457149eaffc4f7982879.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Scenes/GameBoard/icon_grid.png"
-dest_files=["res://.godot/imported/icon_grid.png-7ba7d09090d16e80609344d45c935104.ctex"]
+source_file="res://Scenes/Grid/Highlights/cell_highlight_stroke_only.png"
+dest_files=["res://.godot/imported/cell_highlight_stroke_only.png-a13225c6e381457149eaffc4f7982879.ctex"]
 
 [params]
 

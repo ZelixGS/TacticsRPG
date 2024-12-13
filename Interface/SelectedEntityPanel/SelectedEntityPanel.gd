@@ -8,8 +8,8 @@ extends Control
 var selected_entity: Entity
 
 func _ready() -> void:
-	Event.selected_entity.connect(unit_selected)
-	Event.deselected_entity.connect(unit_deselected)
+	Event.cursor_selected.connect(unit_selected)
+	Event.player_deselected_entity.connect(unit_deselected)
 
 func _process(_delta: float) -> void:
 	if selected_entity:
@@ -40,3 +40,8 @@ func update_movement(entity: Entity = selected_entity) -> void:
 func _on_button_pressed() -> void:
 	if selected_entity:
 		Event.entity_undo_movement.emit(selected_entity)
+
+
+func _on_ability_button_1_pressed() -> void:
+	if selected_entity:
+		selected_entity.spells[0].cast()

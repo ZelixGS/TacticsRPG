@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="MyStealTheRealms"
+config/name="TacticsRPG"
 run/main_scene="res://Game.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://icon.svg"
@@ -20,16 +20,19 @@ config/icon="res://icon.svg"
 Global="*res://Scripts/Singletons/Global.gd"
 Debug="*res://Scripts/Singletons/Debug.gd"
 Event="*res://Scripts/Singletons/Event.gd"
+Create="*res://Scripts/Singletons/Create.gd"
 
 [display]
 
-window/size/viewport_width=908
-window/size/viewport_height=432
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
 window/stretch/scale_mode="integer"
 
 [file_customization]
 
 folder_colors={
+"res://Abilities/": "gray",
 "res://Assets/": "red",
 "res://Components/": "purple",
 "res://Interface/": "yellow",
@@ -89,6 +92,11 @@ right_click={
 "events": [Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"button_mask":2,"position":Vector2(274, 15),"global_position":Vector2(283, 61),"factor":1.0,"button_index":2,"canceled":false,"pressed":true,"double_click":false,"script":null)
 ]
 }
+
+[layer_names]
+
+2d_physics/layer_1="Enviroment"
+2d_physics/layer_2="Entity"
 
 [rendering]
 

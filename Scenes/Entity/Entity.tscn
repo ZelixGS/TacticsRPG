@@ -1,11 +1,12 @@
-[gd_scene load_steps=9 format=3 uid="uid://bkqobfp38ekqq"]
+[gd_scene load_steps=12 format=3 uid="uid://bkqobfp38ekqq"]
 
 [ext_resource type="Script" path="res://Scenes/Entity/Entity.gd" id="1_6vmp8"]
 [ext_resource type="Script" path="res://Components/Health/Health.gd" id="2_el80x"]
 [ext_resource type="Script" path="res://Resources/Stats/Stats.gd" id="2_h6787"]
-[ext_resource type="Script" path="res://Components/Inventory/Inventory.gd" id="3_jfdha"]
+[ext_resource type="Script" path="res://Components/Inventory/Inventory.gd" id="3_65sof"]
 [ext_resource type="Script" path="res://Components/Mitigation/Mitigation.gd" id="4_mts4u"]
 [ext_resource type="Texture2D" uid="uid://d1oreqgwkna4k" path="res://Assets/tilemap_packed.png" id="5_7ungx"]
+[ext_resource type="PackedScene" uid="uid://fuaftqymmxtm" path="res://Components/MouseDetector2D/MouseDetector2D.tscn" id="7_bp3a7"]
 
 [sub_resource type="Resource" id="Resource_7lo26"]
 script = ExtResource("2_h6787")
@@ -46,19 +47,29 @@ parry_chance_from_resolve = 0.3
 action_points = 1
 movement_speed = 5
 
-[sub_resource type="LabelSettings" id="LabelSettings_6wffy"]
-font_size = 8
+[sub_resource type="Resource" id="Resource_sciwo"]
+script = ExtResource("3_65sof")
 
-[node name="Entity" type="Node2D" node_paths=PackedStringArray("label")]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_276nr"]
+size = Vector2(8, 8)
+
+[sub_resource type="LabelSettings" id="LabelSettings_6wffy"]
+font_size = 12
+
+[node name="Entity" type="CharacterBody2D" node_paths=PackedStringArray("health", "label")]
+collision_layer = 2
+collision_mask = 0
 script = ExtResource("1_6vmp8")
 stats = SubResource("Resource_7lo26")
+inventory = SubResource("Resource_sciwo")
+health = NodePath("Health")
 label = NodePath("Label")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_276nr")
 
 [node name="Health" type="Node" parent="."]
 script = ExtResource("2_el80x")
-
-[node name="Inveotry" type="Node" parent="."]
-script = ExtResource("3_jfdha")
 
 [node name="Mitigation" type="Node" parent="."]
 script = ExtResource("4_mts4u")
@@ -85,3 +96,12 @@ text = "Entity"
 label_settings = SubResource("LabelSettings_6wffy")
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="MouseDetector2D" parent="." instance=ExtResource("7_bp3a7")]
+detect_input = true
+detect_enter = true
+detect_exit = true
+mouse_input = &"left_click"
+
+[connection signal="damaged" from="Health" to="." method="_on_health_damaged"]
+[connection signal="healed" from="Health" to="." method="_on_health_healed"]

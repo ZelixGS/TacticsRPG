@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://dh0gec46xcq7o"]
+[gd_scene load_steps=5 format=3 uid="uid://dh0gec46xcq7o"]
 
 [ext_resource type="PackedScene" uid="uid://bqg4jvwwhf078" path="res://Interface/DebugConsole/DebugConsole.tscn" id="1_5wkvo"]
 [ext_resource type="Script" path="res://Interface/Main.gd" id="1_n2usw"]
 [ext_resource type="PackedScene" uid="uid://ba7a6yqp5p6yt" path="res://Interface/SelectedEntityPanel/SelectedEntityPanel.tscn" id="3_n5i35"]
+[ext_resource type="PackedScene" uid="uid://cbmv31dg14bp2" path="res://Interface/MouseOverPanel/mouse_over_panel.tscn" id="4_j6ygl"]
 
 [node name="Interface" type="CanvasLayer"]
 
@@ -32,3 +33,10 @@ offset_right = 20.0
 offset_bottom = 0.0
 grow_horizontal = 2
 grow_vertical = 0
+
+[node name="MouseOverPanel" parent="Main" instance=ExtResource("4_j6ygl")]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+grow_horizontal = 2

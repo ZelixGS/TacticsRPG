@@ -1,61 +1,63 @@
 class_name Cursor extends Node2D
 
-enum STATE { NONE, SELECTED, MEASURE }
+@export var faction: Enum.FACTION = Enum.FACTION.PLAYER
 
-@export var faction: Entity.FACTION
-@export var label: Label
+@export_category("Internals")
+@export var sprite_2d: Sprite2D
 
-var game_board: GameBoard
+var selected: Entity
+var spell: Spell
 
-var current_state: STATE = STATE.NONE
-var current_selection: Entity
-var movement_cells: Array[Vector2i]
+var previous_cell: Vector2i = Vector2i(0, 0)
 
-func _ready() -> void:
-	game_board = Global.game_board
-
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("left_click"):
-		match current_state:
-			STATE.NONE:
-				var entity: Entity = game_board.get_mouse_entity()
-				if is_in_my_faction(entity):
-					select_entity(entity)
-				else:
-					print("The Enemy!")
-			STATE.SELECTED:
-				if not current_selection:
-					return
-				var new_entity: Entity = game_board.get_mouse_entity()
-				if is_in_my_faction(new_entity):
-					deselect_entity()
-					select_entity(new_entity)
-				else:
-					if game_board.mouse_cell() in game_board.get_movement_cells(current_selection):
-						game_board.request_move(current_selection, game_board.mouse_cell())
-					else:
-						deselect_entity()
+#region Ready & Process
 
 func _process(_delta: float) -> void:
-	Debug.add_property("Cursor State", current_state)
-	Debug.add_property("Currrently Selected", current_selection)
-	global_position = game_board.mouse_cell_to_pixel()
+	Debug.add_property("Cursor Selected", selected, 1)
+	Debug.add_property("Cursor Spell", spell, 2)
+	update_cursor()
 
-func select_entity(entity: Entity) -> void:
-	current_state = STATE.SELECTED
-	current_selection = entity
-	Event.selected_entity.emit(current_selection)
+func update_cursor() -> void:
+	var current_cell: Vector2i = Grid.world_to_cell(get_global_mouse_position())
+	global_position = Grid.cell_to_world(current_cell)
+	if current_cell != previous_cell:
+		previous_cell = current_cell
+		Event.mouse_over_new_cell.emit(current_cell)
 
-func deselect_entity() -> void:
-	current_state = STATE.NONE
-	current_selection = null
-	Event.deselected_entity.emit()
+#endregion
 
-func is_in_my_faction(entity: Entity) -> bool:
-	if entity:
-		if entity.faction == faction:
-			return true
-	return false
+func get_entity_under_mouse() -> Entity:
+	var space_state: PhysicsDirectSpaceState2D = get_world_2d().direct_space_state
+	var parameters: PhysicsPointQueryParameters2D = PhysicsPointQueryParameters2D.new()
+	parameters.position = global_position
+	parameters.collision_mask = 2 # Entity Only
+	var result: Array[Dictionary] = space_state.intersect_point(parameters)
+	if result.size() > 0:
+		return result[0]["collider"] as Entity
+	return null
 
-func get_distance(a: Vector2i, b: Vector2i) -> float:
-	return (abs(a.x - b.x) + abs(a.y - b.y)) / 16
+#func _unhandled_input(event: InputEvent) -> void:
+	#if event.is_action_pressed("left_click"):
+		#match state:
+			#STATE.NONE:
+				#state_none()
+			## STATE.SELECTED:
+			## 	state_selected()
+			#STATE.TARGETING:
+				#state_targeting()
+	#if event.is_action_pressed("right_click"):
+		#match state:
+			#STATE.NONE:
+				#return
+			#STATE.SELECTED:
+				#deselect_entity()
+
+# func state_selected() -> void:
+# 	if grid.mouse_cell() in grid.get_movement_cells(selected):
+# 		grid.request_move(selected, grid.mouse_cell())
+
+func state_targeting() -> void:
+	if spell:
+		var entity: Entity = get_entity_under_mouse()
+		if entity:
+			spell.add_target(entity)

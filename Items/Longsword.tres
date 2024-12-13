@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="Item" load_steps=2 format=3 uid="uid://cas2aa2j4dtrg"]
+
+[ext_resource type="Script" path="res://Resources/Item/Item.gd" id="1_w4ius"]
+
+[resource]
+script = ExtResource("1_w4ius")
+internal_name = &"long_sword"
+display_name = &"Long Sword"
+description = ""
+stackable = false
+max_stack = 1
+type = 2
+slot = 7
+minimum_damage = 15
+maximum_damage = 30
+damage_type = 1
+range = 1

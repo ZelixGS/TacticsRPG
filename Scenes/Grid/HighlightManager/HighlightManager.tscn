@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://cbp4vwnomtuml"]
+
+[ext_resource type="Script" path="res://Scenes/Grid/HighlightManager/highlight_manager.gd" id="1_qwnr3"]
+
+[node name="HighlightManager" type="Node"]
+script = ExtResource("1_qwnr3")
+
+[node name="MovementHighlight" type="CanvasGroup" parent="."]
+
+[node name="AttackHighlight" type="CanvasGroup" parent="."]
+
+[node name="PathHighlight" type="CanvasGroup" parent="."]
+
+[node name="AoEHighlight" type="CanvasGroup" parent="."]

@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="SpellData" load_steps=2 format=3 uid="uid://c8cui4huf550g"]
+
+[ext_resource type="Script" path="res://Resources/SpellData/SpellData.gd" id="1_86cru"]
+
+[resource]
+script = ExtResource("1_86cru")
+internal_name = &"basic_attack"
+display_name = &"Attack"
+raw_description = null
+scaling = 2
+damage = 0.0
+target = 3
+target_amount = 1
+healing = 0.0
+action_points = 1
+cast_range = 0
+mana = 0
+cooldown = 0
+duration = 0
+radius = 0
+append_damage = null
+append_healing = null
+append_action_points = null
+append_range = null
+append_mana = null
+append_cooldown = null
+append_duration = null
+append_radius = null
+friendly_fire = null

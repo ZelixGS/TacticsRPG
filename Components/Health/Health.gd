@@ -1,106 +1,118 @@
 @icon("./icon_heart.png")
-class_name Health extends Node
+class_name HealthComponent extends Node
 
-## The Health Component is used to give any node it's attached to, all health related functions.[br][br]
-##
-## This component offers a variety of functions that can be personalized for each instance, including clamping health values, ignoring all damage taken,
-## exceeding maximum health, limiting damage intake with a timer, emitting signals for damage/heal text, and updating health bars.[br][br]
-##
-## The [Health] Component is closely tied to a [Damage] object which has properties and methods that will be used when calculating random damage, critical strikes, and ignoring invincibility timer. [br]([Damage] objects can [u]NEVER[/u] ignore [member god_mode])[br][br]
-## Methods are also provided to forcibly cause damage and healing, primarily used for scripting interactions. [br](Which [u]CAN[/u] ignore [member god_mode])[br][br]
-##
-## TODO:[br]
-## 1. Add Disallow Healing.[br]
-## 2. Disable Healing if at 0 [member health].[br]
-## 3. Add Resurrection method?[br]
-## 2. Add Linkable Components. (Mitigation?, Drop, Death)[br]
+enum TYPE { DAMAGE, HEALING, RESURRECTION }
 
-signal health_changed(current: int, max: int) ## Emitted every time health is changed in a neutral context, should be used with Health related Interface functions
-signal damaged(damage: Damage) ## Emitted when health is changed in a negative context. The [Damage] Object is passed with it for further interaction scripting.
-signal healed(damage: Damage) ## Emitted when health is changed in a postive context. The [Damage] Object is passed with it for further interaction scripting.
-signal died ## Emitted when health has reached 0, any [Drop] or [Death] Components will be called if linked.
+## The Health Component is used to give any node it's attached to health related functions.
+##
+## This component offers a variety of functions that can be personalized for each instance, including clamping [member current_health] values, ignoring all damage taken,
+## exceeding [member max_health], and automatically emitting signals for damaging and healing events.[br][br]
+##
+## There are three primary methods for interacting with health.[br]
+## [method take_damage][br]
+## [method take_healing][br]
+## [method resurrect][br][br]
+## Another two methods are also provided to forcibly cause damage and healing which [u]can[/u] ignore [member god_mode], primarily used for scripting interactions.[br]
+## [method force_damage][br]
+## [method force_heal][br][br]
 
-@export var max_health: float = 10: ## The maximum amount of health this component can have normally. By default on creation current health will be set to [code]max_health[/code]
+signal health_changed(current: int, max: int) ## Emitted every time [member current_health] is changed in a neutral context, should be used with interface functions
+signal damaged(amount: int) ## Emitted when [member current_health] is changed in a negative context.
+signal healed(amount: int) ## Emitted when [member current_health] is changed in a postive context.
+signal resurrected ## Emitted when [member current_health] was at 0, and now is positive.
+signal died(overkill: int) ## Emitted when [member current_health] has reached 0.
+
+@export var max_health: int = 10: ## The maximum amount of [member current_health] this component can have normally. By default on creation current current_health will be set to [code]max_health[/code]
 	set(value):
 		var previous: float = max_health
 		max_health = value
 		if heal_difference:
-			health += max_health - previous
-		health = clamp(health, 0, max_health)
-		health_changed.emit(health, max_health)
+			current_health += max_health - previous
+		current_health = clamp(current_health, 0, max_health)
+		health_changed.emit(current_health, max_health)
 
-@export var invincibility_time: float = 0 ## The standard amount of time a damage event will be registered. Setting this to 0 cause all damage to be registered.[br](This does [u]not[/u] effect healing.)
-@export var exceed_maximum_health: bool = false ## Allows current health to exceed [code]max_health[/code], used in niche situations.
-@export var heal_difference: bool = true ## When modifying maximum health if it should grant the health gained from maximum health increaseing.
-#TODO @export_group("Linked Components")
-#TODO @export var drop_component: Node ## When linked, a call will be sent to this component which will typically drop loot.
-#TODO @export var death_component: Node ## When linked, a call will be sent to this component which will typically handle default deaths.
+@export var exceed_maximum_health: bool = false ## Allows current [member current_health] to exceed [member max_health], used in niche situations.
+@export var heal_difference: bool = true ## When modifying [member max_health] if it should grant the [member current_health] gained from [member max_health] increaseing.
+
 @export_group("Debug")
-@export var god_mode: bool = false ## Causes all damage to be ignored unless forced by [method force_damage]. This does not stop healing from occuring.[br][u][Damage] objects will [b]NEVER[/b] ignore [member god_mode][/u].
+@export var god_mode: bool = false ## Causes all damage to be ignored unless forced by [method force_damage]. This does not stop healing from occuring.
 
-var _invincibility_timer: Timer = Timer.new()
-
-var health: float = max_health: ## The current health of the player. Will automatically clamp any value changes to 0 or [code]max_health[/code] unless [code]exceed_maximum_health[/code] is enabled.
+var current_health: float = max_health: ## The current health, Will clamp any value changes to 0 or [member max_health] unless [member exceed_maximum_health] is enabled.
 	set(value):
 		if exceed_maximum_health:
-			health = max(0, value)
+			current_health = max(0, value)
 		else:
-			health = clamp(value, 0, max_health)
-		health_changed.emit(health, max_health)
+			current_health = clamp(value, 0, max_health)
+		health_changed.emit(current_health, max_health)
+var dead: bool = false ## Used for resurrection purposes.
 
-# Creates a timer with proper settings on ready, this is primarily used for invincibility timings.
-# Damage Objects have a property to ignore the invincibility timer as well.
-func _ready() -> void:
-	_invincibility_timer.one_shot = true
-	_invincibility_timer.autostart = false
-	add_child(_invincibility_timer)
+#region Public Functions
 
-## The primary method to effect the health of the component and will follow or ignore rules based on a [Damage] object.[br][br]
+## The Public Method to negatively effect [member current_health].
+func take_damage(damage: int) -> void:
+	_change_health(damage, TYPE.DAMAGE)
+
+## The Public Method to postively effect [member current_health].
+func take_healing(healing: int) -> void:
+	_change_health(healing, TYPE.HEALING)
+
+## The Public Method to resurrect if [member dead].
+func resurrect(healing: int) -> void:
+	_change_health(healing, TYPE.RESURRECTION)
+
+#endregion
+
+#region Private Functions
+
+## The Private method to effect the [member current_health] of the component.[br][br]
 ## Expected Operations:[br]
-## 1. You can always be healed despite [member god_mode][br]
+## 1. You can always be healed unless [member dead].[br]
+## 2. You can always be resurrected unless not [member dead].
 ## 2. If [member god_mode] is enabled, exit early.[br]
-## 3. Attempting to cause Damage will check [member invincibility_time]. (Unless [Damage] instructs otherwise.)[br]
-## 4. After taking damage a timer will be started [member invincibility_time]. (Unless [Damage] instructs otherwise.)[br]
-## 5. Lastly if [member health] is equal to 0, [signal died] will be emitted and any linked components will be called.[br]
-func change_health(damage: Damage) -> void:
-	if damage.type == damage.TYPE.HEAL:
-		health += damage.amount
-		healed.emit(damage)
-
-	if god_mode:
-		return
-
-	if damage.type == damage.TYPE.DAMAGE:
-		if not damage.ignore_invincibility_time:
-			if not _invincibility_timer.is_stopped():
+## 3. Lastly if [member current_health] is equal to 0, [signal died] will be emitted with overkilled amount.[br]
+func _change_health(amount: int, type: TYPE) -> void:
+	match type:
+		TYPE.HEALING:
+			if dead:
 				return
-		health -= damage.amount
-		damaged.emit(damage)
-		if damage.start_invincibility_time:
-			_invincibility_timer.start(invincibility_time)
-		if health == 0:
-			_death()
+			current_health += amount
+			healed.emit(amount)
+		TYPE.RESURRECTION:
+			if not dead:
+				return
+			dead = false
+			current_health += amount
+			healed.emit(amount)
+			resurrected.emit()
+		TYPE.DAMAGE:
+			if god_mode:
+				return
+			var overkill: int = amount - current_health
+			current_health -= amount
+			damaged.emit(amount)
+			if current_health == 0:
+				dead = true
+				died.emit(overkill)
 
-func _death() -> void:
-	died.emit()
+#endregion
 
 #region Force Methods
 
-## This method will forcibly cause damage, and can be set to ignore [member god_mode].[br]
-## [u]This is not the intended way to cause damage or healing and shoud be used scripting scenarios.[/u]
-func force_damage(amount: int, ignore_god_mode: bool = false) -> void:
+## This method will forcibly cause damage, and can be set to not ignore [member god_mode].[br]
+## [u]This is not the intended way to cause damage or healing and shoud be used only for scripting scenarios.[/u]
+func force_damage(amount: int, ignore_god_mode: bool = true) -> void:
 	var current_god_status: bool = god_mode
 	if ignore_god_mode:
 		god_mode = false
-	var dmg_obj: Damage = Damage.new(amount, Damage.TYPE.DAMAGE, 0, true, false)
-	change_health(dmg_obj)
+	_change_health(amount, TYPE.DAMAGE)
 	god_mode = current_god_status
 
-
-## This method will forcibly increase health.[br]
-## [u]This is not the intended way to cause damage or healing and shoud be used scripting scenarios.[/u]
+## This method will forcibly increase [member current_health] and cause resurrection to happen.[br]
+## [u]This is not the intended way to cause damage or healing and shoud be used only for scripting scenarios.[/u]
 func force_heal(amount: int) -> void:
-	var dmg_obj: Damage = Damage.new(amount, Damage.TYPE.HEAL)
-	change_health(dmg_obj)
+	if dead:
+		_change_health(amount, TYPE.RESURRECTION)
+	else:
+		_change_health(amount, TYPE.HEALING)
 
 #endregion

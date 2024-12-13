@@ -1,52 +1,32 @@
-@icon("./icon_sword.png")
-class_name Damage extends Resource
+class_name Damage extends RefCounted
 
-enum TYPE { DAMAGE, HEAL }
-enum ELEMENT { PHYSICAL, MAGICAL, ARCANE, FIRE, COLD, LIGHTNING, POISON, ACID, HOLY, SHADOW, ELDRICH }
+var amount: int
+var min_varience: int
+var max_varience: int
 
-@export_subgroup("Amount")
-@export var amount: int = 0
+var type: Enum.DAMAGE_TYPE = Enum.DAMAGE_TYPE.MELEE
+var element: Enum.ELEMENT = Enum.ELEMENT.PHYSICAL
 
-@export_subgroup("Varience")
-@export var has_varience: bool = true
-@export var min_varience: float = 0.9
-@export var max_varience: float = 1.1
+var critical_chance: float = 0.0
+var critical_modifier: float = 2.0
 
-@export_subgroup("Type")
-@export var type: TYPE = TYPE.DAMAGE
-@export var element: ELEMENT = ELEMENT.PHYSICAL
+var is_critical: bool = true
+var is_dodgable: bool = true
+var is_parryable: bool = true
+var is_blockable: bool = true
 
-@export_subgroup("Critical Chance")
-@export var can_critically_strike: bool = true
-@export var critical_chance: float = 0.05
-@export var critical_modifier: float = 2.0
+func _init(min_: int, max_: int, critical_chance_: float, element_: Enum.ELEMENT) -> void:
+	min_varience = min_
+	max_varience = max_
+	critical_chance = critical_chance_
+	element = element_
+	roll_damage()
+	roll_critical()
 
-@export_subgroup("Invincibility Frames")
-@export var ignore_invincibility_time: bool = false
-@export var start_invincibility_time: bool = true
+func roll_damage(modifier: int = 0) -> void:
+	amount = (randi_range(min_varience, max_varience) + modifier)
 
-@export_subgroup("Misc")
-@export var dodgable: bool = true
-@export var parryable: bool = true
-@export var blockable: bool = true
-
-func _init(_amount: int, _type: TYPE = TYPE.DAMAGE, _critical_chance: float = 0.05, _ignore_invincibility_time: bool = false, _start_invincibility_time: bool = true) -> void:
-	amount = _amount
-	type = _type
-	critical_chance = _critical_chance
-	ignore_invincibility_time = _ignore_invincibility_time
-	start_invincibility_time = _start_invincibility_time
-
-func get_damage() -> RolledDamage:
-	return RolledDamage.new()
-
-func roll_variance() -> float:
-	return randf_range(min_varience, max_varience)
-
-func roll_critical() -> bool:
-	if not can_critically_strike:
-		return false
+func roll_critical(modifier: float = 0.0) -> void:
 	var roll: float = randf_range(0.0, 100.0)
-	if roll < critical_chance:
-		return true
-	return false
+	if roll < (critical_chance + modifier):
+		is_critical = true
